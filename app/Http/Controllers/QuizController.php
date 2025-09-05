@@ -71,10 +71,10 @@ class QuizController extends Controller
                     'var name = "John";',
                     'variable name = "John";',
                     'v name = "John";',
-                    'declare name = "John";'
+                    'declare name = "John";',
                 ],
                 'correct_answer' => 0,
-                'explanation' => 'The correct way to declare a variable in JavaScript is using var, let, or const keywords.'
+                'explanation' => 'The correct way to declare a variable in JavaScript is using var, let, or const keywords.',
             ],
             [
                 'id' => 2,
@@ -84,10 +84,10 @@ class QuizController extends Controller
                     'push()',
                     'pop()',
                     'shift()',
-                    'unshift()'
+                    'unshift()',
                 ],
                 'correct_answer' => 0,
-                'explanation' => 'The push() method adds one or more elements to the end of an array.'
+                'explanation' => 'The push() method adds one or more elements to the end of an array.',
             ],
             [
                 'id' => 3,
@@ -97,11 +97,11 @@ class QuizController extends Controller
                     'The current function',
                     'The current object',
                     'The global object',
-                    'It depends on how the function is called'
+                    'It depends on how the function is called',
                 ],
                 'correct_answer' => 3,
-                'explanation' => 'The value of "this" depends on how a function is called and the context in which it is executed.'
-            ]
+                'explanation' => 'The value of "this" depends on how a function is called and the context in which it is executed.',
+            ],
         ];
 
         return Inertia::render('quizzes/show', [
@@ -140,6 +140,6 @@ class QuizController extends Controller
         ]);
 
         return redirect()->route('quizzes.show', $quiz)
-            ->with('success', 'Quiz completed! Your score: ' . $score . '%');
+            ->with('success', 'Quiz completed! Your score: '.$score.'%');
     }
 }

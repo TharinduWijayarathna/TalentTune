@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Resume;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -12,26 +10,26 @@ class SkillController extends Controller
     public function index(): Response
     {
         $user = auth()->user();
-        
+
         // Get all resumes for the user
         $resumes = $user->resumes()->where('is_processed', true)->get();
-        
+
         // Aggregate skills from all processed resumes
         $allSkills = [];
         $skillCategories = [];
         $skillLevels = [];
-        
+
         foreach ($resumes as $resume) {
             if ($resume->extracted_skills) {
                 foreach ($resume->extracted_skills as $skill) {
-                    if (!isset($allSkills[$skill])) {
+                    if (! isset($allSkills[$skill])) {
                         $allSkills[$skill] = 0;
                     }
                     $allSkills[$skill]++;
                 }
             }
         }
-        
+
         // Mock data for demonstration - in real app, this would come from AI analysis
         $skillProfile = [
             'technical' => [
@@ -55,21 +53,21 @@ class SkillController extends Controller
                 'Docker' => 45,
                 'AWS' => 55,
                 'Postman' => 70,
-            ]
+            ],
         ];
-        
+
         $skillGaps = [
             ['skill' => 'TypeScript', 'importance' => 'High', 'reason' => 'Growing demand in frontend development'],
             ['skill' => 'GraphQL', 'importance' => 'Medium', 'reason' => 'Modern API development'],
             ['skill' => 'Kubernetes', 'importance' => 'High', 'reason' => 'DevOps and container orchestration'],
         ];
-        
+
         $recommendations = [
             ['type' => 'course', 'title' => 'Complete TypeScript Course', 'provider' => 'Udemy', 'url' => '#'],
             ['type' => 'certification', 'title' => 'AWS Certified Developer', 'provider' => 'Amazon', 'url' => '#'],
             ['type' => 'practice', 'title' => 'Build a GraphQL API', 'provider' => 'Self-paced', 'url' => '#'],
         ];
-        
+
         return Inertia::render('skills/index', [
             'skillProfile' => $skillProfile,
             'skillGaps' => $skillGaps,

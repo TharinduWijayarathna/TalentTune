@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Recommendation;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -32,7 +30,7 @@ class RecommendationController extends Controller
                     'duration' => '12 hours',
                     'level' => 'Intermediate',
                     'rating' => 4.8,
-                    'students' => '45,000+'
+                    'students' => '45,000+',
                 ],
                 'is_completed' => false,
                 'is_dismissed' => false,
@@ -50,7 +48,7 @@ class RecommendationController extends Controller
                 'metadata' => [
                     'exam_duration' => '130 minutes',
                     'cost' => '$150',
-                    'validity' => '3 years'
+                    'validity' => '3 years',
                 ],
                 'is_completed' => false,
                 'is_dismissed' => false,
@@ -68,7 +66,7 @@ class RecommendationController extends Controller
                 'metadata' => [
                     'estimated_time' => '2-3 weeks',
                     'difficulty' => 'Intermediate',
-                    'prerequisites' => ['Node.js', 'JavaScript']
+                    'prerequisites' => ['Node.js', 'JavaScript'],
                 ],
                 'is_completed' => false,
                 'is_dismissed' => false,
@@ -86,7 +84,7 @@ class RecommendationController extends Controller
                 'metadata' => [
                     'duration' => '8 hours',
                     'level' => 'Advanced',
-                    'rating' => 4.6
+                    'rating' => 4.6,
                 ],
                 'is_completed' => true,
                 'is_dismissed' => false,
@@ -104,7 +102,7 @@ class RecommendationController extends Controller
                 'metadata' => [
                     'match_percentage' => 92,
                     'salary_range' => '$80,000 - $120,000',
-                    'demand_level' => 'High'
+                    'demand_level' => 'High',
                 ],
                 'is_completed' => false,
                 'is_dismissed' => false,
@@ -116,20 +114,20 @@ class RecommendationController extends Controller
                 'title' => 'Learning & Development',
                 'description' => 'Courses and tutorials to improve your skills',
                 'count' => 2,
-                'icon' => 'BookOpen'
+                'icon' => 'BookOpen',
             ],
             'career' => [
                 'title' => 'Career Opportunities',
                 'description' => 'Job roles and certifications that match your profile',
                 'count' => 2,
-                'icon' => 'Briefcase'
+                'icon' => 'Briefcase',
             ],
             'skill_development' => [
                 'title' => 'Skill Development',
                 'description' => 'Practical projects and hands-on learning',
                 'count' => 1,
-                'icon' => 'Target'
-            ]
+                'icon' => 'Target',
+            ],
         ];
 
         return Inertia::render('recommendations/index', [

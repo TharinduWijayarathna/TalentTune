@@ -20,7 +20,7 @@ class AiChatController extends Controller
                 'maxTokens' => 8192,
                 'cost' => 'High',
                 'icon' => '🤖',
-                'capabilities' => ['Complex reasoning', 'Creative writing', 'Code generation', 'Analysis']
+                'capabilities' => ['Complex reasoning', 'Creative writing', 'Code generation', 'Analysis'],
             ],
             [
                 'id' => 'gpt-3.5-turbo',
@@ -30,7 +30,7 @@ class AiChatController extends Controller
                 'maxTokens' => 4096,
                 'cost' => 'Medium',
                 'icon' => '⚡',
-                'capabilities' => ['General chat', 'Quick responses', 'Code help', 'Writing']
+                'capabilities' => ['General chat', 'Quick responses', 'Code help', 'Writing'],
             ],
             [
                 'id' => 'claude-3-opus',
@@ -40,7 +40,7 @@ class AiChatController extends Controller
                 'maxTokens' => 200000,
                 'cost' => 'High',
                 'icon' => '🧠',
-                'capabilities' => ['Long context', 'Analysis', 'Writing', 'Reasoning']
+                'capabilities' => ['Long context', 'Analysis', 'Writing', 'Reasoning'],
             ],
             [
                 'id' => 'claude-3-sonnet',
@@ -50,7 +50,7 @@ class AiChatController extends Controller
                 'maxTokens' => 200000,
                 'cost' => 'Medium',
                 'icon' => '🎭',
-                'capabilities' => ['Balanced performance', 'Code', 'Analysis', 'Creative tasks']
+                'capabilities' => ['Balanced performance', 'Code', 'Analysis', 'Creative tasks'],
             ],
             [
                 'id' => 'gemini-pro',
@@ -60,7 +60,7 @@ class AiChatController extends Controller
                 'maxTokens' => 30720,
                 'cost' => 'Medium',
                 'icon' => '💎',
-                'capabilities' => ['Multimodal', 'Code generation', 'Analysis', 'Creative']
+                'capabilities' => ['Multimodal', 'Code generation', 'Analysis', 'Creative'],
             ],
             [
                 'id' => 'llama-2-70b',
@@ -70,8 +70,8 @@ class AiChatController extends Controller
                 'maxTokens' => 4096,
                 'cost' => 'Low',
                 'icon' => '🦙',
-                'capabilities' => ['Open source', 'Code', 'General purpose', 'Research']
-            ]
+                'capabilities' => ['Open source', 'Code', 'General purpose', 'Research'],
+            ],
         ];
 
         // Get user's recent chat history (mock data for now)
@@ -81,28 +81,28 @@ class AiChatController extends Controller
                 'type' => 'user',
                 'message' => 'What skills should I focus on for a frontend developer role?',
                 'timestamp' => now()->subMinutes(5)->toISOString(),
-                'model' => 'gpt-4'
+                'model' => 'gpt-4',
             ],
             [
                 'id' => 2,
                 'type' => 'ai',
                 'message' => 'Based on your resume analysis, I recommend focusing on these key frontend skills:\n\n1. **React/Next.js** - You have basic React knowledge, but advanced patterns would help\n2. **TypeScript** - Essential for modern frontend development\n3. **CSS Frameworks** - Tailwind CSS, styled-components\n4. **Testing** - Jest, React Testing Library\n5. **Build Tools** - Vite, Webpack\n\nWould you like me to suggest specific learning resources for any of these?',
                 'timestamp' => now()->subMinutes(4)->toISOString(),
-                'model' => 'gpt-4'
+                'model' => 'gpt-4',
             ],
             [
                 'id' => 3,
                 'type' => 'user',
                 'message' => 'How can I improve my resume for ATS systems?',
                 'timestamp' => now()->subMinutes(2)->toISOString(),
-                'model' => 'gpt-4'
+                'model' => 'gpt-4',
             ],
             [
                 'id' => 4,
                 'type' => 'ai',
                 'message' => 'Here are the top ATS optimization tips for your resume:\n\n**Format & Structure:**\n- Use standard section headers (Experience, Education, Skills)\n- Avoid tables, columns, or complex layouts\n- Use simple bullet points\n\n**Keywords:**\n- Include job-specific keywords from the job description\n- Use both acronyms and full forms (e.g., "JavaScript (JS)")\n- Add technical skills prominently\n\n**Content:**\n- Use action verbs (Developed, Implemented, Led)\n- Include quantifiable achievements\n- Keep descriptions concise but impactful\n\nWould you like me to analyze your current resume for ATS optimization?',
                 'timestamp' => now()->subMinutes(1)->toISOString(),
-                'model' => 'gpt-4'
+                'model' => 'gpt-4',
             ],
         ];
 
