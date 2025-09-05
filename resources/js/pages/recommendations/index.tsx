@@ -28,7 +28,7 @@ interface Recommendation {
     url: string | null;
     provider: string;
     priority: number;
-    metadata: Record<string, any>;
+    metadata: Record<string, string | number | boolean>;
     is_completed: boolean;
     is_dismissed: boolean;
 }
@@ -41,7 +41,7 @@ interface Category {
 }
 
 interface Props {
-    recommendations: any[];
+    recommendations: Recommendation[];
     personalizedRecommendations: Recommendation[];
     categories: Record<string, Category>;
 }

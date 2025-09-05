@@ -6,17 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-    Users,
     Play,
     Clock,
-    Star,
-    CheckCircle,
-    AlertCircle,
     Calendar,
     Target,
     BookOpen,
-    TrendingUp,
-    Award,
     MessageSquare,
     Mic,
     Video,

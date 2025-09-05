@@ -14,9 +14,6 @@ import {
     Clock,
     CheckCircle,
     AlertCircle,
-    TrendingUp,
-    Target,
-    Brain,
     Eye,
     Download,
     Trash2,
@@ -24,9 +21,6 @@ import {
     BarChart3,
     Star,
     Lightbulb,
-    AlertTriangle,
-    Info,
-    ExternalLink,
     RefreshCw
 } from 'lucide-react';
 
@@ -80,7 +74,7 @@ export default function ResumeIndex({ resumes, cvReviews }: Props) {
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-    const { data, setData, post, processing, errors, progress } = useForm({
+    const { setData, post, processing, errors, progress } = useForm({
         resume: null as File | null,
     });
 
@@ -454,7 +448,7 @@ export default function ResumeIndex({ resumes, cvReviews }: Props) {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-4">
-                                        {resumes.map((resume, index) => (
+                                        {resumes.map((resume) => (
                                             <div key={resume.id} className="flex items-start gap-4">
                                                 <div className="flex flex-col items-center">
                                                     <div className={`w-3 h-3 rounded-full ${
@@ -610,7 +604,7 @@ export default function ResumeIndex({ resumes, cvReviews }: Props) {
                             </Card>
                         ) : (
                             <div className="space-y-8">
-                                {cvReviews.map((review, index) => (
+                                {cvReviews.map((review) => (
                                     <div key={review.resume_id} className="space-y-6">
                                         {/* Resume Header */}
                                         <Card>

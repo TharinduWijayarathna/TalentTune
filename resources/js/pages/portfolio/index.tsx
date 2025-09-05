@@ -16,11 +16,9 @@ import {
     Eye,
     Plus,
     Edit,
-    Trash2,
     Award,
     MessageSquare,
     Users,
-    TrendingUp,
     Globe,
 } from 'lucide-react';
 

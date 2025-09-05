@@ -5,8 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import {
-    FileText,
-    Download,
     ArrowLeft,
     CheckCircle,
     Clock,
@@ -25,11 +23,32 @@ interface Resume {
     created_at: string;
     ai_analysis?: string;
     extracted_skills?: string[];
-    work_experience?: any[];
-    education?: any[];
-    certifications?: any[];
-    skill_gaps?: any[];
-    job_fit_scores?: any[];
+    work_experience?: Array<{
+        title: string;
+        company: string;
+        duration: string;
+        description?: string;
+    }>;
+    education?: Array<{
+        degree: string;
+        institution: string;
+        year: string;
+    }>;
+    certifications?: Array<{
+        name: string;
+        issuer: string;
+        date: string;
+    }>;
+    skill_gaps?: Array<{
+        skill: string;
+        importance: string;
+        reason: string;
+    }>;
+    job_fit_scores?: Array<{
+        role: string;
+        score: number;
+        skills: string[];
+    }>;
 }
 
 interface Props {

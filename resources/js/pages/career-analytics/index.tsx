@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,20 +8,16 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     TrendingUp,
-    TrendingDown,
     DollarSign,
     Target,
     BarChart3,
     PieChart,
-    Users,
-    MapPin,
     Calendar,
     Star,
     ArrowUp,
     ArrowDown,
     Minus,
     Eye,
-    ExternalLink,
 } from 'lucide-react';
 
 interface SkillTrend {

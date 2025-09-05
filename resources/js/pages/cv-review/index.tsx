@@ -8,8 +8,6 @@ import {
     FileText,
     CheckCircle,
     AlertCircle,
-    TrendingUp,
-    TrendingDown,
     Star,
     Eye,
     Download,
@@ -51,11 +49,15 @@ interface CvReview {
 }
 
 interface Props {
-    resumes: any[];
+    resumes: Array<{
+        id: number;
+        filename: string;
+        created_at: string;
+    }>;
     cvReviews: CvReview[];
 }
 
-export default function CvReviewIndex({ resumes, cvReviews }: Props) {
+export default function CvReviewIndex({ cvReviews }: Props) {
     const getScoreColor = (score: number): string => {
         if (score >= 80) return 'text-green-600';
         if (score >= 60) return 'text-yellow-600';
@@ -120,7 +122,7 @@ export default function CvReviewIndex({ resumes, cvReviews }: Props) {
                     </Card>
                 ) : (
                     <div className="space-y-8">
-                        {cvReviews.map((review, index) => (
+                        {cvReviews.map((review) => (
                             <div key={review.resume_id} className="space-y-6">
                                 {/* Resume Header */}
                                 <Card>

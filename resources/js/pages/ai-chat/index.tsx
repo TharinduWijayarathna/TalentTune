@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -12,18 +11,10 @@ import {
     Copy,
     ThumbsUp,
     ThumbsDown,
-    RefreshCw,
-    Settings,
     Paperclip,
-    Plus,
     MessageSquare,
     Sparkles,
-    ChevronDown,
-    MoreHorizontal,
-    Edit3,
-    Trash2,
-    Share,
-    FolderOpen
+    MoreHorizontal
 } from 'lucide-react';
 
 interface ChatMessage {
@@ -52,7 +43,7 @@ interface Props {
     userSkills: string[];
 }
 
-export default function AiChatIndex({ availableModels, chatHistory, suggestedQuestions, userSkills }: Props) {
+export default function AiChatIndex({ availableModels, chatHistory, suggestedQuestions }: Props) {
     const [selectedModel, setSelectedModel] = useState(availableModels[0]?.id || 'gpt-4');
     const [messages, setMessages] = useState<ChatMessage[]>([]); // Start with empty chat
     const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +51,7 @@ export default function AiChatIndex({ availableModels, chatHistory, suggestedQue
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, processing, errors } = useForm({
         message: '',
         model: selectedModel,
     });
@@ -100,7 +91,7 @@ export default function AiChatIndex({ availableModels, chatHistory, suggestedQue
             message: data.message,
             model: selectedModel,
         }, {
-            onSuccess: (response: any) => {
+            onSuccess: (response: { aiResponse: string; timestamp: string; model: string }) => {
                 const aiMessage: ChatMessage = {
                     id: Date.now() + 1,
                     type: 'ai',

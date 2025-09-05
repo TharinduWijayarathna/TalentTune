@@ -15,7 +15,6 @@ import {
     Play,
     CheckCircle,
     Circle,
-    ExternalLink,
     Target,
     Users,
     Calendar,

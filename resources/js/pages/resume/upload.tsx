@@ -13,7 +13,7 @@ export default function ResumeUpload() {
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-    const { data, setData, post, processing, errors, progress } = useForm({
+    const { setData, post, processing, errors, progress } = useForm({
         resume: null as File | null,
     });
 

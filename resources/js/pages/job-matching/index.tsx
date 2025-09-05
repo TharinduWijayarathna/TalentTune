@@ -11,15 +11,10 @@ import {
     MapPin,
     Clock,
     DollarSign,
-    Star,
     Bookmark,
     ExternalLink,
-    Filter,
     Briefcase,
-    Users,
-    TrendingUp,
     CheckCircle,
-    AlertCircle,
     Calendar,
 } from 'lucide-react';
 
@@ -53,7 +48,7 @@ interface Application {
 interface Props {
     jobs: Job[];
     applications: Application[];
-    savedJobs: any[];
+    savedJobs: Job[];
 }
 
 export default function JobMatchingIndex({ jobs, applications, savedJobs }: Props) {

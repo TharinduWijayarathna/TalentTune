@@ -10,8 +10,7 @@ import {
     CheckCircle,
     Play,
     Trophy,
-    BookOpen,
-    Users
+    BookOpen
 } from 'lucide-react';
 
 interface Quiz {
@@ -27,7 +26,7 @@ interface Quiz {
 }
 
 interface Props {
-    quizzes: any[];
+    quizzes: Quiz[];
     availableQuizzes: Quiz[];
 }
 

@@ -15,7 +15,6 @@ import {
     TrendingUp,
     CheckCircle,
     Clock,
-    AlertCircle,
     ArrowRight,
     MessageCircle
 } from 'lucide-react';
