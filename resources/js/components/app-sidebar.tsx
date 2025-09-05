@@ -16,7 +16,12 @@ import {
     FileText,
     History,
     TrendingUp,
-    MessageCircle
+    MessageCircle,
+    Briefcase,
+    GraduationCap,
+    Users,
+    BarChart3,
+    FolderOpen
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -35,6 +40,31 @@ const mainNavItems: NavItem[] = [
         title: 'My Skill Profile',
         href: '/skills',
         icon: Target,
+    },
+    {
+        title: 'Job Matching',
+        href: '/job-matching',
+        icon: Briefcase,
+    },
+    {
+        title: 'Learning & Development',
+        href: '/learning',
+        icon: GraduationCap,
+    },
+    {
+        title: 'Interview Prep',
+        href: '/interview',
+        icon: Users,
+    },
+    {
+        title: 'Career Analytics',
+        href: '/career-analytics',
+        icon: BarChart3,
+    },
+    {
+        title: 'Portfolio & Projects',
+        href: '/portfolio',
+        icon: FolderOpen,
     },
     {
         title: 'Quizzes',
