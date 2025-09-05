@@ -21,7 +21,8 @@ import {
     BarChart3,
     Star,
     Lightbulb,
-    RefreshCw
+    RefreshCw,
+    Target
 } from 'lucide-react';
 
 interface Resume {
