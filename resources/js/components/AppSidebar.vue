@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import {
@@ -12,31 +11,182 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { edit as profileEdit } from '@/routes/profile';
+import { cvReview } from '@/routes';
+import { atsScoring } from '@/routes';
+import { mockInterview } from '@/routes';
+import { portfolio, profileScore, skillExpectations, jobApplications } from '@/routes';
+import { postJobs, reviewCandidates, filterCandidates, subscriptions } from '@/routes';
+import { userManagement, analytics, payments, companyManagement, hrManagement } from '@/routes';
+import { type NavItem, type UserRole } from '@/types';
+import { Link, usePage } from '@inertiajs/vue3';
+import {
+    LayoutGrid,
+    FileText,
+    FileCheck,
+    Video,
+    Settings,
+    Briefcase,
+    TrendingUp,
+    Target,
+    FileSearch,
+    FolderKanban,
+    Users,
+    BarChart3,
+    CreditCard,
+    Building2,
+    UserCog,
+    ClipboardList,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
+const page = usePage();
+const userRole = computed(() => (page.props.auth?.user?.role || 'job_seeker') as UserRole);
+
+// Job Seeker Navigation Items
+const jobSeekerNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'CV Review',
+        href: cvReview(),
+        icon: FileText,
+    },
+    {
+        title: 'ATS Scoring',
+        href: atsScoring(),
+        icon: FileCheck,
+    },
+    {
+        title: 'Mock Interview',
+        href: mockInterview(),
+        icon: Video,
+    },
+    {
+        title: 'Portfolio',
+        href: portfolio(),
+        icon: FolderKanban,
+    },
+    {
+        title: 'Profile Score',
+        href: profileScore(),
+        icon: TrendingUp,
+    },
+    {
+        title: 'Skill Expectations',
+        href: skillExpectations(),
+        icon: Target,
+    },
+    {
+        title: 'Job Applications',
+        href: jobApplications(),
+        icon: FileSearch,
+    },
+    {
+        title: 'Settings',
+        href: profileEdit(),
+        icon: Settings,
+    },
 ];
 
-const footerNavItems: NavItem[] = [
+// HR Professional Navigation Items
+const hrProfessionalNavItems: NavItem[] = [
     {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
+        title: 'Dashboard',
+        href: dashboard(),
+        icon: LayoutGrid,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
+        title: 'Post Jobs',
+        href: postJobs(),
+        icon: Briefcase,
+    },
+    {
+        title: 'Review Candidates',
+        href: reviewCandidates(),
+        icon: Users,
+    },
+    {
+        title: 'Filter Candidates',
+        href: filterCandidates(),
+        icon: FileSearch,
+    },
+    {
+        title: 'Applied Candidates',
+        href: reviewCandidates(),
+        icon: ClipboardList,
+    },
+    {
+        title: 'Subscriptions',
+        href: subscriptions(),
+        icon: CreditCard,
+    },
+    {
+        title: 'Settings',
+        href: profileEdit(),
+        icon: Settings,
     },
 ];
+
+// Admin Navigation Items
+const adminNavItems: NavItem[] = [
+    {
+        title: 'Dashboard',
+        href: dashboard(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'User Management',
+        href: userManagement(),
+        icon: Users,
+    },
+    {
+        title: 'Job Seekers',
+        href: userManagement(),
+        icon: UserCog,
+    },
+    {
+        title: 'Companies',
+        href: companyManagement(),
+        icon: Building2,
+    },
+    {
+        title: 'HR Professionals',
+        href: hrManagement(),
+        icon: Users,
+    },
+    {
+        title: 'Analytics',
+        href: analytics(),
+        icon: BarChart3,
+    },
+    {
+        title: 'Payments',
+        href: payments(),
+        icon: CreditCard,
+    },
+    {
+        title: 'Settings',
+        href: profileEdit(),
+        icon: Settings,
+    },
+];
+
+const mainNavItems = computed(() => {
+    switch (userRole.value) {
+        case 'hr_professional':
+            return hrProfessionalNavItems;
+        case 'admin':
+            return adminNavItems;
+        case 'job_seeker':
+        default:
+            return jobSeekerNavItems;
+    }
+});
 </script>
 
 <template>
@@ -58,7 +208,6 @@ const footerNavItems: NavItem[] = [
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

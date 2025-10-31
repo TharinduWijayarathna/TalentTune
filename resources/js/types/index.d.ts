@@ -26,12 +26,15 @@ export type AppPageProps<
     sidebarOpen: boolean;
 };
 
+export type UserRole = 'job_seeker' | 'hr_professional' | 'admin';
+
 export interface User {
     id: number;
     name: string;
     email: string;
     avatar?: string;
     email_verified_at: string | null;
+    role?: UserRole;
     created_at: string;
     updated_at: string;
 }
