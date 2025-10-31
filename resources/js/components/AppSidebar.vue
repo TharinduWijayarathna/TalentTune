@@ -201,12 +201,7 @@ const mainNavItems = computed(() => {
 
             <!-- Admin Panel Info for Admins -->
             <template v-else-if="userRole === 'admin'">
-                <SidebarAdminPanel
-                    :stats="{
-                        totalUsers: page.props.auth?.user?.stats?.total_users || undefined,
-                        revenue: page.props.auth?.user?.stats?.revenue || undefined,
-                    }"
-                />
+                <SidebarAdminPanel />
             </template>
         </SidebarFooter>
     </Sidebar>

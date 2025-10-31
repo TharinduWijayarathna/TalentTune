@@ -1,66 +1,27 @@
 <script setup lang="ts">
-import { Badge } from '@/components/ui/badge';
-import {
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from '@/components/ui/sidebar';
-import { analytics, payments } from '@/routes';
-import { Link } from '@inertiajs/vue3';
-import { BarChart3, CreditCard, Shield } from 'lucide-vue-next';
-
-interface Props {
-    stats?: {
-        totalUsers?: number;
-        revenue?: string;
-    };
-}
-
-const props = withDefaults(defineProps<Props>(), {
-    stats: () => ({
-        totalUsers: null,
-        revenue: null,
-    }),
-});
+import { HelpCircle, ArrowRight } from 'lucide-vue-next';
 </script>
 
 <template>
-    <SidebarGroup class="px-2 py-0">
-        <SidebarGroupContent>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <div class="flex items-center gap-2 px-2 py-1.5">
-                        <Shield class="h-4 w-4 text-primary" />
-                        <span class="text-xs font-medium">Admin Panel</span>
-                    </div>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton as-child size="sm" class="w-full">
-                        <Link :href="analytics()" class="flex w-full items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <BarChart3 class="h-3.5 w-3.5" />
-                                <span class="text-xs">Analytics</span>
-                            </div>
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton as-child size="sm" class="w-full">
-                        <Link :href="payments()" class="flex w-full items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <CreditCard class="h-3.5 w-3.5" />
-                                <span class="text-xs">Payments</span>
-                            </div>
-                            <Badge v-if="stats?.revenue" variant="secondary" class="text-xs">
-                                {{ stats.revenue }}
-                            </Badge>
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-        </SidebarGroupContent>
-    </SidebarGroup>
+    <a
+        href="#"
+        @click.prevent
+        class="group relative block overflow-hidden rounded-lg border border-sidebar-border/70 bg-gradient-to-br from-sidebar-accent/50 to-transparent p-3.5 transition-all duration-300 hover:scale-[1.01] hover:border-sidebar-border hover:bg-sidebar-accent hover:shadow-md"
+    >
+        <div class="relative flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/50 transition-transform group-hover:scale-105">
+                    <HelpCircle class="h-4 w-4 text-muted-foreground" />
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xs font-semibold leading-tight">Help & Support</span>
+                    <span class="text-[10px] text-muted-foreground leading-tight">
+                        Get assistance
+                    </span>
+                </div>
+            </div>
+            <ArrowRight class="h-3.5 w-3.5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+        </div>
+    </a>
 </template>
 
