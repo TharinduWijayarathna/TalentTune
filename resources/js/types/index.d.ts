@@ -35,6 +35,11 @@ export interface User {
     avatar?: string;
     email_verified_at: string | null;
     role?: UserRole;
+    subscription_tier?: 'basic' | 'professional' | 'enterprise' | null;
+    stats?: {
+        total_users?: number;
+        revenue?: string;
+    };
     created_at: string;
     updated_at: string;
 }

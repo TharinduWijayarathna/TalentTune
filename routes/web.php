@@ -17,48 +17,48 @@ Route::get('dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Job Seeker Routes
     Route::get('cv-review', function () {
-        return Inertia::render('CVReview');
+        return Inertia::render('job-seeker/CVReview');
     })->name('cv-review');
 
     Route::get('ats-scoring', function () {
-        return Inertia::render('ATSScoring');
+        return Inertia::render('job-seeker/ATSScoring');
     })->name('ats-scoring');
 
     Route::get('mock-interview', function () {
-        return Inertia::render('MockInterview');
+        return Inertia::render('job-seeker/MockInterview');
     })->name('mock-interview');
 
     Route::get('portfolio', function () {
-        return Inertia::render('Portfolio');
+        return Inertia::render('job-seeker/Portfolio');
     })->name('portfolio');
 
     Route::get('profile-score', function () {
-        return Inertia::render('ProfileScore');
+        return Inertia::render('job-seeker/ProfileScore');
     })->name('profile-score');
 
     Route::get('skill-expectations', function () {
-        return Inertia::render('SkillExpectations');
+        return Inertia::render('job-seeker/SkillExpectations');
     })->name('skill-expectations');
 
     Route::get('job-applications', function () {
-        return Inertia::render('JobApplications');
+        return Inertia::render('job-seeker/JobApplications');
     })->name('job-applications');
 
     // HR Professional Routes
     Route::get('post-jobs', function () {
-        return Inertia::render('PostJobs');
+        return Inertia::render('hr/PostJobs');
     })->name('post-jobs');
 
     Route::get('review-candidates', function () {
-        return Inertia::render('ReviewCandidates');
+        return Inertia::render('hr/ReviewCandidates');
     })->name('review-candidates');
 
     Route::get('filter-candidates', function () {
-        return Inertia::render('FilterCandidates');
+        return Inertia::render('hr/FilterCandidates');
     })->name('filter-candidates');
 
     Route::get('subscriptions', function () {
-        return Inertia::render('Subscriptions');
+        return Inertia::render('hr/Subscriptions');
     })->name('subscriptions');
 
     // Admin Routes

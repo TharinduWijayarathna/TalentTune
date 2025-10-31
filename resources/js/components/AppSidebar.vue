@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import NavMain from '@/components/NavMain.vue';
-import NavUser from '@/components/NavUser.vue';
+import SidebarAdminPanel from '@/components/SidebarAdminPanel.vue';
+import SidebarSubscriptionTier from '@/components/SidebarSubscriptionTier.vue';
 import {
     Sidebar,
     SidebarContent,
@@ -85,12 +86,7 @@ const jobSeekerNavItems: NavItem[] = [
         title: 'Job Applications',
         href: jobApplications(),
         icon: FileSearch,
-    },
-    {
-        title: 'Settings',
-        href: profileEdit(),
-        icon: Settings,
-    },
+    }
 ];
 
 // HR Professional Navigation Items
@@ -124,12 +120,7 @@ const hrProfessionalNavItems: NavItem[] = [
         title: 'Subscriptions',
         href: subscriptions(),
         icon: CreditCard,
-    },
-    {
-        title: 'Settings',
-        href: profileEdit(),
-        icon: Settings,
-    },
+    }
 ];
 
 // Admin Navigation Items
@@ -168,12 +159,7 @@ const adminNavItems: NavItem[] = [
         title: 'Payments',
         href: payments(),
         icon: CreditCard,
-    },
-    {
-        title: 'Settings',
-        href: profileEdit(),
-        icon: Settings,
-    },
+    }
 ];
 
 const mainNavItems = computed(() => {
@@ -207,8 +193,21 @@ const mainNavItems = computed(() => {
             <NavMain :items="mainNavItems" />
         </SidebarContent>
 
-        <SidebarFooter>
-            <NavUser />
+        <SidebarFooter class="p-4">
+            <!-- Subscription Tier for Job Seekers and HR Professionals -->
+            <template v-if="userRole === 'job_seeker' || userRole === 'hr_professional'">
+                <SidebarSubscriptionTier :tier="page.props.auth?.user?.subscription_tier || null" />
+            </template>
+
+            <!-- Admin Panel Info for Admins -->
+            <template v-else-if="userRole === 'admin'">
+                <SidebarAdminPanel
+                    :stats="{
+                        totalUsers: page.props.auth?.user?.stats?.total_users || undefined,
+                        revenue: page.props.auth?.user?.stats?.revenue || undefined,
+                    }"
+                />
+            </template>
         </SidebarFooter>
     </Sidebar>
     <slot />
