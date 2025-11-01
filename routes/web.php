@@ -53,6 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Job Applications
     Route::get('job-applications', [JobApplicationController::class, 'index'])->name('job-applications');
+    Route::get('browse-jobs', [JobApplicationController::class, 'browse'])->name('browse-jobs');
     Route::post('job-applications', [JobApplicationController::class, 'store'])->name('job-applications.store');
     Route::delete('job-applications/{jobApplication}', [JobApplicationController::class, 'destroy'])->name('job-applications.destroy');
 

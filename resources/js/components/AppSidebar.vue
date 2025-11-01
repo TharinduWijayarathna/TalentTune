@@ -16,7 +16,7 @@ import { edit as profileEdit } from '@/routes/profile';
 import { cvReview } from '@/routes';
 import { atsScoring } from '@/routes';
 import { mockInterview } from '@/routes';
-import { portfolio, profileScore, skillExpectations, jobApplications } from '@/routes';
+import { portfolio, profileScore, skillExpectations, jobApplications, browseJobs } from '@/routes';
 import { postJobs, reviewCandidates, filterCandidates, subscriptions } from '@/routes';
 import { userManagement, analytics, payments, companyManagement, hrManagement, jobSeekerManagement } from '@/routes';
 import { type NavItem, type UserRole } from '@/types';
@@ -83,6 +83,11 @@ const jobSeekerNavItems: NavItem[] = [
         icon: Target,
     },
     {
+        title: 'Browse Jobs',
+        href: browseJobs(),
+        icon: Briefcase,
+    },
+    {
         title: 'Job Applications',
         href: jobApplications(),
         icon: FileSearch,
@@ -110,11 +115,6 @@ const hrProfessionalNavItems: NavItem[] = [
         title: 'Filter Candidates',
         href: filterCandidates(),
         icon: FileSearch,
-    },
-    {
-        title: 'Applied Candidates',
-        href: reviewCandidates(),
-        icon: ClipboardList,
     },
     {
         title: 'Subscriptions',

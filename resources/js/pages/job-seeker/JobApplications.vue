@@ -58,6 +58,18 @@ const getStatusIcon = (status: string) => {
 
 const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
+        pending: 'bg-yellow-100 text-yellow-800',
+        reviewing: 'bg-blue-100 text-blue-800',
+        shortlisted: 'bg-purple-100 text-purple-800',
+        interviewed: 'bg-indigo-100 text-indigo-800',
+        accepted: 'bg-green-100 text-green-800',
+        rejected: 'bg-red-100 text-red-800',
+    };
+    return colors[status] || 'bg-gray-100 text-gray-800';
+};
+
+const getStatusIconColor = (status: string) => {
+    const colors: Record<string, string> = {
         pending: 'text-yellow-600',
         reviewing: 'text-blue-600',
         shortlisted: 'text-purple-600',
@@ -145,7 +157,7 @@ const getStatusColor = (status: string) => {
                                         <h3 class="font-semibold text-lg">{{ application.job.title }}</h3>
                                         <component
                                             :is="getStatusIcon(application.status)"
-                                            :class="['h-4 w-4', getStatusColor(application.status)]"
+                                            :class="['h-4 w-4', getStatusIconColor(application.status)]"
                                         />
                                     </div>
                                     <div class="flex items-center gap-4 text-sm text-muted-foreground mb-2">
@@ -161,7 +173,7 @@ const getStatusColor = (status: string) => {
                                     <p class="text-xs text-muted-foreground mb-2">
                                         Applied on {{ new Date(application.applied_at).toLocaleDateString() }}
                                     </p>
-                                    <span :class="['inline-block px-2 py-1 rounded text-xs', getStatusColor(application.status)]">
+                                    <span :class="['inline-block px-2 py-1 rounded text-xs font-medium', getStatusColor(application.status)]">
                                         {{ application.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) }}
                                     </span>
                                 </div>

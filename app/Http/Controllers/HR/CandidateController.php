@@ -15,10 +15,12 @@ class CandidateController extends Controller
 {
     public function index(Request $request): Response
     {
+        // Get all jobs posted by this HR professional
         $jobs = Job::where('user_id', Auth::id())->pluck('id');
 
+        // Get all applications for those jobs
         $applications = JobApplication::whereIn('job_id', $jobs)
-            ->with(['user', 'job'])
+            ->with(['user', 'job.company'])
             ->latest()
             ->get();
 
