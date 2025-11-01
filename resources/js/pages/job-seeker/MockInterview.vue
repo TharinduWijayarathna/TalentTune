@@ -7,8 +7,9 @@ import { mockInterview } from '@/routes';
 import mockInterviewRoutes from '@/routes/mock-interview';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
-import { Video, Play, Mic, Clock, TrendingUp, CheckCircle2, TrendingDown, MessageSquare, Volume2 } from 'lucide-vue-next';
+import { Video, Play, Mic, Clock, TrendingUp, CheckCircle2, TrendingDown, MessageSquare, Volume2, X } from 'lucide-vue-next';
 import { ref } from 'vue';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const props = defineProps<{
     sessions?: Array<{
@@ -17,6 +18,7 @@ const props = defineProps<{
         difficulty: string;
         status: string;
         score?: number;
+        feedback?: Record<string, any>;
         completed_at?: string;
         created_at: string;
     }>;
@@ -98,6 +100,19 @@ const formatTime = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+};
+
+const selectedResult = ref<any>(null);
+const isResultDialogOpen = ref(false);
+
+const openResults = (session: any) => {
+    selectedResult.value = session;
+    isResultDialogOpen.value = true;
+};
+
+const closeResults = () => {
+    selectedResult.value = null;
+    isResultDialogOpen.value = false;
 };
 </script>
 
@@ -284,7 +299,7 @@ const formatTime = (minutes: number) => {
                                         v-if="session.status === 'completed'"
                                         variant="outline"
                                         size="sm"
-                                        @click="router.visit(mockInterviewRoutes.session(session.id).url)"
+                                        @click="openResults(session)"
                                     >
                                         View Results
                                     </Button>
@@ -305,6 +320,56 @@ const formatTime = (minutes: number) => {
                 </Card>
             </div>
         </div>
+
+        <!-- Results Dialog -->
+        <Dialog :open="isResultDialogOpen" @update:open="(val) => { if (!val) closeResults(); }">
+            <DialogContent class="max-w-3xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle>Interview Results</DialogTitle>
+                    <DialogDescription>
+                        {{ selectedResult ? getTypeLabel(selectedResult.type) : '' }} Interview - {{ selectedResult ? getDifficultyLabel(selectedResult.difficulty) : '' }}
+                    </DialogDescription>
+                </DialogHeader>
+                <div v-if="selectedResult" class="space-y-6 mt-4">
+                    <!-- Score -->
+                    <div class="p-4 bg-primary/5 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">Overall Score</p>
+                                <p class="text-3xl font-bold mt-1">
+                                    {{ selectedResult.score !== null && selectedResult.score !== undefined ? Math.round(selectedResult.score) : 'N/A' }}/100
+                                </p>
+                            </div>
+                            <TrendingUp class="h-12 w-12 text-primary" />
+                        </div>
+                    </div>
+
+                    <!-- Overall Feedback -->
+                    <div v-if="selectedResult.feedback && selectedResult.feedback.overall" class="p-4 border rounded-lg">
+                        <h3 class="font-semibold mb-2">Overall Feedback</h3>
+                        <p class="text-sm text-muted-foreground whitespace-pre-wrap">{{ selectedResult.feedback.overall }}</p>
+                    </div>
+
+                    <!-- Question-by-Question Feedback -->
+                    <div v-if="selectedResult.feedback" class="space-y-4">
+                        <h3 class="font-semibold">Detailed Feedback</h3>
+                        <div
+                            v-for="(feedback, question) in selectedResult.feedback"
+                            :key="String(question)"
+                            v-show="String(question) !== 'overall'"
+                            class="p-4 border rounded-lg"
+                        >
+                            <p class="font-medium mb-2">{{ question }}</p>
+                            <p class="text-sm text-muted-foreground whitespace-pre-wrap">{{ feedback }}</p>
+                        </div>
+                    </div>
+
+                    <div v-else class="text-sm text-muted-foreground text-center py-4">
+                        No detailed feedback available yet.
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
     </AppLayout>
 </template>
 

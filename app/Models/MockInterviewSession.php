@@ -15,6 +15,7 @@ class MockInterviewSession extends Model
         'status',
         'questions',
         'answers',
+        'conversation_history',
         'feedback',
         'score',
         'started_at',
@@ -25,6 +26,7 @@ class MockInterviewSession extends Model
     protected $casts = [
         'questions' => 'array',
         'answers' => 'array',
+        'conversation_history' => 'array',
         'feedback' => 'array',
         'score' => 'decimal:2',
         'started_at' => 'datetime',

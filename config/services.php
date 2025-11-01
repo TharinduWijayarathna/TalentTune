@@ -18,8 +18,10 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
-    'google' => [
-        'application_credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
+        'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
     ],
 
     'resend' => [

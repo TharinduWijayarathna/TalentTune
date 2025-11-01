@@ -156,7 +156,7 @@ const completeInterview = () => {
         },
         {
             onSuccess: () => {
-                router.reload();
+                router.visit(mockInterview().url);
             },
         }
     );

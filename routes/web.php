@@ -36,6 +36,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('mock-interview', [\App\Http\Controllers\JobSeeker\MockInterviewController::class, 'store'])->name('mock-interview.store');
     Route::get('mock-interview/{session}', [\App\Http\Controllers\JobSeeker\MockInterviewController::class, 'session'])->name('mock-interview.session');
     Route::put('mock-interview/{session}', [\App\Http\Controllers\JobSeeker\MockInterviewController::class, 'update'])->name('mock-interview.update');
+    Route::post('mock-interview/{session}/conversation', [\App\Http\Controllers\JobSeeker\MockInterviewController::class, 'processConversation'])->name('mock-interview.conversation');
+    Route::get('mock-interview/{session}/initial', [\App\Http\Controllers\JobSeeker\MockInterviewController::class, 'getInitialMessage'])->name('mock-interview.initial');
 
     Route::get('profile-score', function () {
         return Inertia::render('job-seeker/ProfileScore');
@@ -111,9 +113,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('hr-management/{user}', [UserManagementController::class, 'hrDestroy'])->name('hr-management.destroy');
 });
 
-// API Routes (for TTS - can be accessed by authenticated users)
-Route::middleware(['auth'])->group(function () {
-    Route::post('api/text-to-speech', [\App\Http\Controllers\Api\TextToSpeechController::class, 'synthesize'])->name('api.text-to-speech');
-});
+// API Routes can be added here if needed in the future
 
 require __DIR__.'/settings.php';
