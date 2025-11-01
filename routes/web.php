@@ -31,9 +31,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('job-seeker/ATSScoring');
     })->name('ats-scoring');
 
-    Route::get('mock-interview', function () {
-        return Inertia::render('job-seeker/MockInterview');
-    })->name('mock-interview');
+    // Mock Interview
+    Route::get('mock-interview', [\App\Http\Controllers\JobSeeker\MockInterviewController::class, 'index'])->name('mock-interview');
+    Route::post('mock-interview', [\App\Http\Controllers\JobSeeker\MockInterviewController::class, 'store'])->name('mock-interview.store');
+    Route::get('mock-interview/{session}', [\App\Http\Controllers\JobSeeker\MockInterviewController::class, 'session'])->name('mock-interview.session');
+    Route::put('mock-interview/{session}', [\App\Http\Controllers\JobSeeker\MockInterviewController::class, 'update'])->name('mock-interview.update');
 
     Route::get('profile-score', function () {
         return Inertia::render('job-seeker/ProfileScore');
@@ -107,6 +109,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('hr-management', [UserManagementController::class, 'hrStore'])->name('hr-management.store');
     Route::put('hr-management/{user}', [UserManagementController::class, 'hrUpdate'])->name('hr-management.update');
     Route::delete('hr-management/{user}', [UserManagementController::class, 'hrDestroy'])->name('hr-management.destroy');
+});
+
+// API Routes (for TTS - can be accessed by authenticated users)
+Route::middleware(['auth'])->group(function () {
+    Route::post('api/text-to-speech', [\App\Http\Controllers\Api\TextToSpeechController::class, 'synthesize'])->name('api.text-to-speech');
 });
 
 require __DIR__.'/settings.php';

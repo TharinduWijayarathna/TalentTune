@@ -1,0 +1,283 @@
+<script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { mockInterview } from '@/routes';
+import mockInterviewRoutes from '@/routes/mock-interview';
+import { type BreadcrumbItem } from '@/types';
+import { Head, router, usePage } from '@inertiajs/vue3';
+import { Video, Play, Clock, CheckCircle2, ArrowRight, ArrowLeft, Mic } from 'lucide-vue-next';
+import { ref, computed } from 'vue';
+
+const props = defineProps<{
+    session?: {
+        id: number;
+        type: string;
+        difficulty: string;
+        status: string;
+        questions?: string[];
+        answers?: Record<string, string>;
+        feedback?: Record<string, any>;
+        score?: number;
+        started_at?: string;
+    };
+}>();
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Mock Interview',
+        href: mockInterview().url,
+    },
+    {
+        title: 'Interview Session',
+        href: mockInterviewRoutes.session(props.session?.id || 0).url,
+    },
+];
+
+const page = usePage();
+const errors = computed(() => page.props.errors || {});
+
+const currentQuestionIndex = ref(0);
+const answers = ref<Record<string, string>>(props.session?.answers || {});
+
+// Sample questions based on type (in a real app, these would come from an AI service or database)
+const sampleQuestions: Record<string, Record<string, string[]>> = {
+    technical: {
+        beginner: [
+            'What is the difference between a variable and a constant?',
+            'Explain what a function is in programming.',
+            'What is the purpose of an if statement?',
+        ],
+        intermediate: [
+            'Explain the difference between REST and GraphQL APIs.',
+            'What is the difference between SQL JOIN types?',
+            'How does garbage collection work in programming languages?',
+        ],
+        advanced: [
+            'Explain the trade-offs between microservices and monolithic architecture.',
+            'How would you design a distributed caching system?',
+            'Explain the CAP theorem and its implications.',
+        ],
+    },
+    behavioral: {
+        beginner: [
+            'Tell me about yourself.',
+            'Why are you interested in this role?',
+            'What are your greatest strengths?',
+        ],
+        intermediate: [
+            'Describe a time when you had to work under pressure.',
+            'Tell me about a challenge you faced and how you overcame it.',
+            'Give an example of when you worked effectively in a team.',
+        ],
+        advanced: [
+            'Describe a situation where you had to make a difficult decision with limited information.',
+            'Tell me about a time you had to convince others of your idea.',
+            'Describe a conflict you resolved in a professional setting.',
+        ],
+    },
+    mixed: {
+        beginner: [
+            'What is your biggest technical achievement?',
+            'How do you approach learning new technologies?',
+            'Describe a project you are proud of.',
+        ],
+        intermediate: [
+            'How do you balance technical requirements with business needs?',
+            'Describe your experience with agile development.',
+            'How do you handle technical debt in your projects?',
+        ],
+        advanced: [
+            'Describe a complex technical problem you solved and the approach you took.',
+            'How do you mentor junior developers?',
+            'Explain a time you had to make a technical decision that affected the entire team.',
+        ],
+    },
+};
+
+const questions = computed(() => {
+    if (props.session?.questions && props.session.questions.length > 0) {
+        return props.session.questions;
+    }
+    // Generate sample questions if not provided
+    const typeQuestions = sampleQuestions[props.session?.type || 'mixed'];
+    return typeQuestions?.[props.session?.difficulty || 'intermediate'] || [];
+});
+
+const currentQuestion = computed(() => questions.value[currentQuestionIndex.value]);
+
+const totalQuestions = computed(() => questions.value.length);
+
+const isFirstQuestion = computed(() => currentQuestionIndex.value === 0);
+const isLastQuestion = computed(() => currentQuestionIndex.value === totalQuestions.value - 1);
+
+const getTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+        technical: 'Technical',
+        behavioral: 'Behavioral',
+        mixed: 'Mixed',
+    };
+    return labels[type] || type;
+};
+
+const getDifficultyLabel = (difficulty: string) => {
+    const labels: Record<string, string> = {
+        beginner: 'Beginner',
+        intermediate: 'Intermediate',
+        advanced: 'Advanced',
+    };
+    return labels[difficulty] || difficulty;
+};
+
+const nextQuestion = () => {
+    if (currentQuestionIndex.value < totalQuestions.value - 1) {
+        currentQuestionIndex.value++;
+    }
+};
+
+const previousQuestion = () => {
+    if (currentQuestionIndex.value > 0) {
+        currentQuestionIndex.value--;
+    }
+};
+
+const saveAnswer = () => {
+    if (!currentQuestion.value) return;
+    answers.value[currentQuestion.value] = answers.value[currentQuestion.value] || '';
+};
+
+const completeInterview = () => {
+    router.put(
+        mockInterviewRoutes.update(props.session?.id || 0).url,
+        {
+            answers: answers.value,
+            status: 'completed',
+        },
+        {
+            onSuccess: () => {
+                router.reload();
+            },
+        }
+    );
+};
+</script>
+
+<template>
+    <Head title="Mock Interview Session" />
+
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="flex h-full flex-1 flex-col gap-6 p-6">
+            <!-- Session Header -->
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight">
+                        {{ getTypeLabel(session?.type || '') }} Interview
+                    </h1>
+                    <p class="text-muted-foreground mt-2">
+                        {{ getDifficultyLabel(session?.difficulty || '') }} Level
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
+                        Question {{ currentQuestionIndex + 1 }} of {{ totalQuestions }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Interview Card -->
+            <Card class="shadow-sm">
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-2">
+                        <Mic class="h-5 w-5" />
+                        Interview Question
+                    </CardTitle>
+                    <CardDescription>
+                        Take your time to think and provide a thoughtful answer
+                    </CardDescription>
+                </CardHeader>
+                <CardContent class="space-y-6">
+                    <!-- Current Question -->
+                    <div>
+                        <Label class="mb-2 block text-base font-semibold">Question:</Label>
+                        <p class="text-lg">{{ currentQuestion }}</p>
+                    </div>
+
+                    <!-- Answer Input -->
+                    <div class="grid gap-2">
+                        <Label for="answer">Your Answer</Label>
+                        <textarea
+                            id="answer"
+                            :value="answers[currentQuestion] || ''"
+                            @input="answers[currentQuestion] = ($event.target as HTMLTextAreaElement).value"
+                            @blur="saveAnswer"
+                            class="w-full min-h-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            placeholder="Type your answer here..."
+                        />
+                        <p class="text-xs text-muted-foreground">
+                            Your answer is automatically saved as you type
+                        </p>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="flex items-center justify-between pt-4 border-t">
+                        <Button
+                            variant="outline"
+                            :disabled="isFirstQuestion"
+                            @click="previousQuestion"
+                        >
+                            <ArrowLeft class="mr-2 h-4 w-4" />
+                            Previous
+                        </Button>
+
+                        <div class="flex gap-2">
+                            <span
+                                v-for="(question, index) in questions"
+                                :key="index"
+                                class="h-2 w-2 rounded-full"
+                                :class="index === currentQuestionIndex ? 'bg-primary' : index in answers ? 'bg-green-500' : 'bg-muted'"
+                            />
+                        </div>
+
+                        <Button
+                            v-if="!isLastQuestion"
+                            @click="nextQuestion"
+                        >
+                            Next
+                            <ArrowRight class="ml-2 h-4 w-4" />
+                        </Button>
+                        <Button
+                            v-else
+                            @click="completeInterview"
+                        >
+                            <CheckCircle2 class="mr-2 h-4 w-4" />
+                            Complete Interview
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <!-- Progress Summary -->
+            <Card class="shadow-sm">
+                <CardHeader>
+                    <CardTitle>Progress</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-sm">
+                            <span>Questions Answered</span>
+                            <span class="font-medium">{{ Object.keys(answers).length }} / {{ totalQuestions }}</span>
+                        </div>
+                        <div class="w-full bg-secondary rounded-full h-2">
+                            <div
+                                class="bg-primary h-2 rounded-full transition-all"
+                                :style="{ width: `${(Object.keys(answers).length / totalQuestions) * 100}%` }"
+                            />
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    </AppLayout>
+</template>
+

@@ -18,6 +18,10 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    'google' => [
+        'application_credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+    ],
+
     'resend' => [
         'key' => env('RESEND_KEY'),
     ],
