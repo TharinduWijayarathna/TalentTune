@@ -18,7 +18,7 @@ import { atsScoring } from '@/routes';
 import { mockInterview } from '@/routes';
 import { portfolio, profileScore, skillExpectations, jobApplications } from '@/routes';
 import { postJobs, reviewCandidates, filterCandidates, subscriptions } from '@/routes';
-import { userManagement, analytics, payments, companyManagement, hrManagement } from '@/routes';
+import { userManagement, analytics, payments, companyManagement, hrManagement, jobSeekerManagement } from '@/routes';
 import { type NavItem, type UserRole } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import {
@@ -137,7 +137,7 @@ const adminNavItems: NavItem[] = [
     },
     {
         title: 'Job Seekers',
-        href: userManagement(),
+        href: jobSeekerManagement(),
         icon: UserCog,
     },
     {
@@ -148,7 +148,7 @@ const adminNavItems: NavItem[] = [
     {
         title: 'HR Professionals',
         href: hrManagement(),
-        icon: Users,
+        icon: UserCog,
     },
     {
         title: 'Analytics',

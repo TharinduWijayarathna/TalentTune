@@ -42,4 +42,9 @@ class Company extends Model
     {
         return $this->hasMany(Job::class);
     }
+
+    public function hrProfessionals(): HasMany
+    {
+        return $this->hasMany(User::class)->where('role', 'hr_professional');
+    }
 }

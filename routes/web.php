@@ -89,13 +89,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('company-management/{company}', [CompanyController::class, 'update'])->name('company-management.update');
     Route::delete('company-management/{company}', [CompanyController::class, 'destroy'])->name('company-management.destroy');
 
-    // User Management
+    // User Management (Admins and HR Professionals only)
     Route::get('user-management', [UserManagementController::class, 'index'])->name('user-management');
+    Route::post('user-management', [UserManagementController::class, 'store'])->name('user-management.store');
     Route::put('user-management/{user}', [UserManagementController::class, 'update'])->name('user-management.update');
     Route::delete('user-management/{user}', [UserManagementController::class, 'destroy'])->name('user-management.destroy');
 
+    // Job Seeker Management
+    Route::get('job-seeker-management', [\App\Http\Controllers\Admin\JobSeekerManagementController::class, 'index'])->name('job-seeker-management');
+    Route::post('job-seeker-management', [\App\Http\Controllers\Admin\JobSeekerManagementController::class, 'store'])->name('job-seeker-management.store');
+    Route::put('job-seeker-management/{user}', [\App\Http\Controllers\Admin\JobSeekerManagementController::class, 'update'])->name('job-seeker-management.update');
+    Route::delete('job-seeker-management/{user}', [\App\Http\Controllers\Admin\JobSeekerManagementController::class, 'destroy'])->name('job-seeker-management.destroy');
+
     // HR Management
     Route::get('hr-management', [UserManagementController::class, 'hrIndex'])->name('hr-management');
+    Route::post('hr-management', [UserManagementController::class, 'hrStore'])->name('hr-management.store');
+    Route::put('hr-management/{user}', [UserManagementController::class, 'hrUpdate'])->name('hr-management.update');
+    Route::delete('hr-management/{user}', [UserManagementController::class, 'hrDestroy'])->name('hr-management.destroy');
 });
 
 require __DIR__.'/settings.php';
