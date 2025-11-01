@@ -5,10 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { reviewCandidates } from '@/routes';
 import reviewCandidatesRoutes from '@/routes/review-candidates';
+import InputError from '@/components/InputError.vue';
+import { Label } from '@/components/ui/label';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { Users, UserCheck, Mail, Calendar, FileText, CheckCircle2, XCircle, Clock } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps<{
     applications?: Array<{
@@ -37,6 +39,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const selectedApplication = ref<any>(null);
 const isDialogOpen = ref(false);
+const page = usePage();
+const errors = computed(() => page.props.errors || {});
 const form = ref({
     status: '',
     notes: '',
@@ -48,6 +52,7 @@ const openDialog = (application: any) => {
         status: application.status,
         notes: application.notes || '',
     };
+    router.reload({ only: ['errors'], preserveState: false });
     isDialogOpen.value = true;
 };
 
@@ -59,6 +64,9 @@ const updateApplication = () => {
             onSuccess: () => {
                 isDialogOpen.value = false;
                 selectedApplication.value = null;
+            },
+            onError: () => {
+                // Keep dialog open to show errors
             },
         }
     );
@@ -184,6 +192,7 @@ const getStatusColor = (status: string) => {
                                 id="status"
                                 v-model="form.status"
                                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm h-9"
+                                :class="errors.status ? 'border-destructive' : ''"
                             >
                                 <option value="pending">Pending</option>
                                 <option value="reviewing">Reviewing</option>
@@ -192,6 +201,7 @@ const getStatusColor = (status: string) => {
                                 <option value="accepted">Accepted</option>
                                 <option value="rejected">Rejected</option>
                             </select>
+                            <InputError :message="errors.status" />
                         </div>
                         <div class="grid gap-2">
                             <Label for="notes">Notes</Label>
@@ -199,8 +209,10 @@ const getStatusColor = (status: string) => {
                                 id="notes"
                                 v-model="form.notes"
                                 class="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                :class="errors.notes ? 'border-destructive' : ''"
                                 placeholder="Add notes about this candidate..."
                             />
+                            <InputError :message="errors.notes" />
                         </div>
                     </div>
                     <DialogFooter>

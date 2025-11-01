@@ -8,8 +8,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { hrManagement } from '@/routes';
 import hrManagementRoutes from '@/routes/hr-management';
 import { Combobox } from '@/components/ui/combobox';
+import InputError from '@/components/InputError.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { Users, UserCog, Mail, Calendar, Edit, Trash2, Plus, Building2, Search, Filter } from 'lucide-vue-next';
 import { ref, computed } from 'vue';
 
@@ -45,6 +46,8 @@ const isDialogOpen = ref(false);
 const editingHR = ref<any>(null);
 const searchQuery = ref(props.filters?.search || '');
 const companyFilter = ref(props.filters?.company_id || '');
+const page = usePage();
+const errors = computed(() => page.props.errors || {});
 const form = ref({
     name: '',
     email: '',
@@ -83,6 +86,7 @@ const openDialog = (hr?: any) => {
             company_id: '',
         };
     }
+    router.reload({ only: ['errors'], preserveState: false });
     isDialogOpen.value = true;
 };
 
@@ -101,6 +105,9 @@ const submitForm = () => {
                     isDialogOpen.value = false;
                     editingHR.value = null;
                 },
+                onError: () => {
+                    // Keep dialog open to show errors
+                },
             }
         );
     } else {
@@ -108,6 +115,9 @@ const submitForm = () => {
             onSuccess: () => {
                 isDialogOpen.value = false;
                 editingHR.value = null;
+            },
+            onError: () => {
+                // Keep dialog open to show errors
             },
         });
     }
@@ -158,19 +168,23 @@ const applyFilters = () => {
                         <div class="space-y-6">
                             <div class="grid gap-2">
                                 <Label for="name">Name</Label>
-                                <Input id="name" v-model="form.name" required />
+                                <Input id="name" v-model="form.name" required :class="errors.name ? 'border-destructive' : ''" />
+                                <InputError :message="errors.name" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="email">Email</Label>
-                                <Input id="email" v-model="form.email" type="email" required />
+                                <Input id="email" v-model="form.email" type="email" required :class="errors.email ? 'border-destructive' : ''" />
+                                <InputError :message="errors.email" />
                             </div>
                             <div v-if="!editingHR" class="grid gap-2">
                                 <Label for="password">Password</Label>
-                                <Input id="password" v-model="form.password" type="password" required />
+                                <Input id="password" v-model="form.password" type="password" required :class="errors.password ? 'border-destructive' : ''" />
+                                <InputError :message="errors.password" />
                             </div>
                             <div v-else class="grid gap-2">
                                 <Label for="password">Password <span class="text-muted-foreground text-xs">(leave empty to keep current)</span></Label>
-                                <Input id="password" v-model="form.password" type="password" />
+                                <Input id="password" v-model="form.password" type="password" :class="errors.password ? 'border-destructive' : ''" />
+                                <InputError :message="errors.password" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="company_id">Company *</Label>
@@ -182,6 +196,7 @@ const applyFilters = () => {
                                     search-placeholder="Search companies..."
                                     empty-text="No company found."
                                 />
+                                <InputError :message="errors.company_id" />
                             </div>
                         </div>
                         <DialogFooter>

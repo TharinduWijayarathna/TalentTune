@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { jobSeekerManagement } from '@/routes';
 import jobSeekerManagementRoutes from '@/routes/job-seeker-management';
+import InputError from '@/components/InputError.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { Users, Search, Filter, Edit, Trash2, Mail, Plus, UserCircle } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps<{
     jobSeekers?: {
@@ -36,6 +37,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 const isDialogOpen = ref(false);
 const editingJobSeeker = ref<any>(null);
 const searchQuery = ref(props.filters?.search || '');
+const page = usePage();
+const errors = computed(() => page.props.errors || {});
 
 const form = ref({
     name: '',
@@ -58,6 +61,7 @@ const openDialog = (jobSeeker?: any) => {
             password: '',
         };
     }
+    router.reload({ only: ['errors'], preserveState: false });
     isDialogOpen.value = true;
 };
 
@@ -76,6 +80,9 @@ const submitForm = () => {
                     isDialogOpen.value = false;
                     editingJobSeeker.value = null;
                 },
+                onError: () => {
+                    // Keep dialog open to show errors
+                },
             }
         );
     } else {
@@ -83,6 +90,9 @@ const submitForm = () => {
             onSuccess: () => {
                 isDialogOpen.value = false;
                 editingJobSeeker.value = null;
+            },
+            onError: () => {
+                // Keep dialog open to show errors
             },
         });
     }
@@ -131,19 +141,23 @@ const applyFilters = () => {
                         <div class="space-y-6">
                             <div class="grid gap-2">
                                 <Label for="name">Name</Label>
-                                <Input id="name" v-model="form.name" required />
+                                <Input id="name" v-model="form.name" required :class="errors.name ? 'border-destructive' : ''" />
+                                <InputError :message="errors.name" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="email">Email</Label>
-                                <Input id="email" v-model="form.email" type="email" required />
+                                <Input id="email" v-model="form.email" type="email" required :class="errors.email ? 'border-destructive' : ''" />
+                                <InputError :message="errors.email" />
                             </div>
                             <div v-if="!editingJobSeeker" class="grid gap-2">
                                 <Label for="password">Password</Label>
-                                <Input id="password" v-model="form.password" type="password" required />
+                                <Input id="password" v-model="form.password" type="password" required :class="errors.password ? 'border-destructive' : ''" />
+                                <InputError :message="errors.password" />
                             </div>
                             <div v-else class="grid gap-2">
                                 <Label for="password">Password <span class="text-muted-foreground text-xs">(leave empty to keep current)</span></Label>
-                                <Input id="password" v-model="form.password" type="password" />
+                                <Input id="password" v-model="form.password" type="password" :class="errors.password ? 'border-destructive' : ''" />
+                                <InputError :message="errors.password" />
                             </div>
                         </div>
                         <DialogFooter>

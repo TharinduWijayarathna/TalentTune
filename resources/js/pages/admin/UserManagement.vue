@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { userManagement } from '@/routes';
 import userManagementRoutes from '@/routes/user-management';
+import InputError from '@/components/InputError.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { Users, Search, Filter, Edit, Trash2, Mail, Plus, Building2 } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps<{
     users?: {
@@ -47,6 +48,8 @@ const isDialogOpen = ref(false);
 const editingUser = ref<any>(null);
 const searchQuery = ref(props.filters?.search || '');
 const roleFilter = ref(props.filters?.role || '');
+const page = usePage();
+const errors = computed(() => page.props.errors || {});
 
 const form = ref({
     name: '',
@@ -75,6 +78,8 @@ const openDialog = (user?: any) => {
             company_id: '',
         };
     }
+    // Clear errors when opening dialog
+    router.reload({ only: ['errors'], preserveState: false });
     isDialogOpen.value = true;
 };
 
@@ -93,6 +98,9 @@ const submitForm = () => {
                     isDialogOpen.value = false;
                     editingUser.value = null;
                 },
+                onError: () => {
+                    // Keep dialog open to show errors
+                },
             }
         );
     } else {
@@ -100,6 +108,9 @@ const submitForm = () => {
             onSuccess: () => {
                 isDialogOpen.value = false;
                 editingUser.value = null;
+            },
+            onError: () => {
+                // Keep dialog open to show errors
             },
         });
     }
@@ -158,19 +169,23 @@ const getRoleBadgeColor = (role: string) => {
                         <div class="space-y-6">
                             <div class="grid gap-2">
                                 <Label for="name">Name</Label>
-                                <Input id="name" v-model="form.name" required />
+                                <Input id="name" v-model="form.name" required :class="errors.name ? 'border-destructive' : ''" />
+                                <InputError :message="errors.name" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="email">Email</Label>
-                                <Input id="email" v-model="form.email" type="email" required />
+                                <Input id="email" v-model="form.email" type="email" required :class="errors.email ? 'border-destructive' : ''" />
+                                <InputError :message="errors.email" />
                             </div>
                             <div v-if="!editingUser" class="grid gap-2">
                                 <Label for="password">Password</Label>
-                                <Input id="password" v-model="form.password" type="password" required />
+                                <Input id="password" v-model="form.password" type="password" required :class="errors.password ? 'border-destructive' : ''" />
+                                <InputError :message="errors.password" />
                             </div>
                             <div v-else class="grid gap-2">
                                 <Label for="password">Password <span class="text-muted-foreground text-xs">(leave empty to keep current)</span></Label>
-                                <Input id="password" v-model="form.password" type="password" />
+                                <Input id="password" v-model="form.password" type="password" :class="errors.password ? 'border-destructive' : ''" />
+                                <InputError :message="errors.password" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="role">Role</Label>
@@ -178,10 +193,12 @@ const getRoleBadgeColor = (role: string) => {
                                     id="role"
                                     v-model="form.role"
                                     class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm h-9"
+                                    :class="errors.role ? 'border-destructive' : ''"
                                 >
                                     <option value="admin">Admin</option>
                                     <option value="hr_professional">HR Professional</option>
                                 </select>
+                                <InputError :message="errors.role" />
                             </div>
                             <div v-if="form.role === 'hr_professional' && companies" class="grid gap-2">
                                 <Label for="company_id">Company</Label>
@@ -189,12 +206,14 @@ const getRoleBadgeColor = (role: string) => {
                                     id="company_id"
                                     v-model="form.company_id"
                                     class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm h-9"
+                                    :class="errors.company_id ? 'border-destructive' : ''"
                                 >
                                     <option value="">Select Company</option>
                                     <option v-for="company in companies" :key="company.id" :value="company.id">
                                         {{ company.name }}
                                     </option>
                                 </select>
+                                <InputError :message="errors.company_id" />
                             </div>
                         </div>
                         <DialogFooter>

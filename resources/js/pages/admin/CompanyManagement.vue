@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { companyManagement } from '@/routes';
 import companyManagementRoutes from '@/routes/company-management';
+import InputError from '@/components/InputError.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { Building2, Plus, Edit, Trash2, Globe, CheckCircle2 } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps<{
     companies?: Array<{
@@ -35,6 +36,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const isDialogOpen = ref(false);
 const editingCompany = ref<any>(null);
+const page = usePage();
+const errors = computed(() => page.props.errors || {});
 
 const form = ref({
     name: '',
@@ -78,6 +81,7 @@ const openDialog = (company?: any) => {
             is_verified: false,
         };
     }
+    router.reload({ only: ['errors'], preserveState: false });
     isDialogOpen.value = true;
 };
 
@@ -88,12 +92,18 @@ const submitForm = () => {
                 isDialogOpen.value = false;
                 editingCompany.value = null;
             },
+            onError: () => {
+                // Keep dialog open to show errors
+            },
         });
     } else {
         router.post(companyManagementRoutes.store().url, form.value, {
             onSuccess: () => {
                 isDialogOpen.value = false;
                 editingCompany.value = null;
+            },
+            onError: () => {
+                // Keep dialog open to show errors
             },
         });
     }
@@ -133,7 +143,8 @@ const deleteCompany = (id: number) => {
                         <div class="space-y-6">
                             <div class="grid gap-2">
                                 <Label for="name">Company Name *</Label>
-                                <Input id="name" v-model="form.name" placeholder="Company name" required />
+                                <Input id="name" v-model="form.name" placeholder="Company name" required :class="errors.name ? 'border-destructive' : ''" />
+                                <InputError :message="errors.name" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="description">Description</Label>
@@ -141,40 +152,49 @@ const deleteCompany = (id: number) => {
                                     id="description"
                                     v-model="form.description"
                                     class="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                    :class="errors.description ? 'border-destructive' : ''"
                                     placeholder="Company description"
                                 />
+                                <InputError :message="errors.description" />
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="grid gap-2">
                                     <Label for="website">Website</Label>
-                                    <Input id="website" v-model="form.website" type="url" placeholder="https://..." />
+                                    <Input id="website" v-model="form.website" type="url" placeholder="https://..." :class="errors.website ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.website" />
                                 </div>
                                 <div class="grid gap-2">
                                     <Label for="email">Email</Label>
-                                    <Input id="email" v-model="form.email" type="email" placeholder="contact@company.com" />
+                                    <Input id="email" v-model="form.email" type="email" placeholder="contact@company.com" :class="errors.email ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.email" />
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="grid gap-2">
                                     <Label for="industry">Industry</Label>
-                                    <Input id="industry" v-model="form.industry" placeholder="e.g., Technology" />
+                                    <Input id="industry" v-model="form.industry" placeholder="e.g., Technology" :class="errors.industry ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.industry" />
                                 </div>
                                 <div class="grid gap-2">
                                     <Label for="size">Company Size</Label>
-                                    <Input id="size" v-model="form.size" placeholder="e.g., 51-200" />
+                                    <Input id="size" v-model="form.size" placeholder="e.g., 51-200" :class="errors.size ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.size" />
                                 </div>
                             </div>
                             <div class="grid gap-2">
                                 <Label for="location">Location</Label>
-                                <Input id="location" v-model="form.location" placeholder="City, Country" />
+                                <Input id="location" v-model="form.location" placeholder="City, Country" :class="errors.location ? 'border-destructive' : ''" />
+                                <InputError :message="errors.location" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="address">Address</Label>
-                                <Input id="address" v-model="form.address" placeholder="Street address" />
+                                <Input id="address" v-model="form.address" placeholder="Street address" :class="errors.address ? 'border-destructive' : ''" />
+                                <InputError :message="errors.address" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="phone">Phone</Label>
-                                <Input id="phone" v-model="form.phone" type="tel" placeholder="+1 (555) 123-4567" />
+                                <Input id="phone" v-model="form.phone" type="tel" placeholder="+1 (555) 123-4567" :class="errors.phone ? 'border-destructive' : ''" />
+                                <InputError :message="errors.phone" />
                             </div>
                             <div class="flex items-center gap-2">
                                 <input id="is_verified" v-model="form.is_verified" type="checkbox" class="rounded" />

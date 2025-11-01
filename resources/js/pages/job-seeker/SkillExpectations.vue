@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { skillExpectations } from '@/routes';
 import skillExpectationsRoutes from '@/routes/skill-expectations';
+import InputError from '@/components/InputError.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { Plus, Target, TrendingUp, Edit, Trash2, Calendar } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps<{
     skills?: Array<{
@@ -33,6 +34,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const isDialogOpen = ref(false);
 const editingSkill = ref<any>(null);
+const page = usePage();
+const errors = computed(() => page.props.errors || {});
 
 const form = ref({
     skill_name: '',
@@ -64,6 +67,7 @@ const openDialog = (skill?: any) => {
             status: 'not_started',
         };
     }
+    router.reload({ only: ['errors'], preserveState: false });
     isDialogOpen.value = true;
 };
 
@@ -74,12 +78,18 @@ const submitForm = () => {
                 isDialogOpen.value = false;
                 editingSkill.value = null;
             },
+            onError: () => {
+                // Keep dialog open to show errors
+            },
         });
     } else {
         router.post(skillExpectationsRoutes.store().url, form.value, {
             onSuccess: () => {
                 isDialogOpen.value = false;
                 editingSkill.value = null;
+            },
+            onError: () => {
+                // Keep dialog open to show errors
             },
         });
     }
@@ -134,7 +144,8 @@ const getProgress = (current: number, target: number) => {
                         <div class="space-y-6">
                             <div class="grid gap-2">
                                 <Label for="skill_name">Skill Name</Label>
-                                <Input id="skill_name" v-model="form.skill_name" placeholder="e.g., JavaScript, Python" required />
+                                <Input id="skill_name" v-model="form.skill_name" placeholder="e.g., JavaScript, Python" required :class="errors.skill_name ? 'border-destructive' : ''" />
+                                <InputError :message="errors.skill_name" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="description">Description</Label>
@@ -142,22 +153,27 @@ const getProgress = (current: number, target: number) => {
                                     id="description"
                                     v-model="form.description"
                                     class="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                    :class="errors.description ? 'border-destructive' : ''"
                                     placeholder="Describe what you want to achieve"
                                 />
+                                <InputError :message="errors.description" />
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="grid gap-2">
                                     <Label for="current_level">Current Level (0-100)</Label>
-                                    <Input id="current_level" v-model.number="form.current_level" type="number" min="0" max="100" />
+                                    <Input id="current_level" v-model.number="form.current_level" type="number" min="0" max="100" :class="errors.current_level ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.current_level" />
                                 </div>
                                 <div class="grid gap-2">
                                     <Label for="target_level">Target Level (0-100)</Label>
-                                    <Input id="target_level" v-model.number="form.target_level" type="number" min="0" max="100" />
+                                    <Input id="target_level" v-model.number="form.target_level" type="number" min="0" max="100" :class="errors.target_level ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.target_level" />
                                 </div>
                             </div>
                             <div class="grid gap-2">
                                 <Label for="target_date">Target Date</Label>
-                                <Input id="target_date" v-model="form.target_date" type="date" />
+                                <Input id="target_date" v-model="form.target_date" type="date" :class="errors.target_date ? 'border-destructive' : ''" />
+                                <InputError :message="errors.target_date" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="status">Status</Label>
@@ -165,12 +181,14 @@ const getProgress = (current: number, target: number) => {
                                     id="status"
                                     v-model="form.status"
                                     class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm h-9"
+                                    :class="errors.status ? 'border-destructive' : ''"
                                 >
                                     <option value="not_started">Not Started</option>
                                     <option value="in_progress">In Progress</option>
                                     <option value="completed">Completed</option>
                                     <option value="on_hold">On Hold</option>
                                 </select>
+                                <InputError :message="errors.status" />
                             </div>
                         </div>
                         <DialogFooter>

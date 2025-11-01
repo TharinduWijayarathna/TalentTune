@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { postJobs } from '@/routes';
 import postJobsRoutes from '@/routes/post-jobs';
+import InputError from '@/components/InputError.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { Briefcase, Plus, MapPin, DollarSign, Edit, Trash2, Clock } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps<{
     jobs?: Array<{
@@ -43,6 +44,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const isDialogOpen = ref(false);
 const editingJob = ref<any>(null);
+const page = usePage();
+const errors = computed(() => page.props.errors || {});
 
 const form = ref({
     company_id: '',
@@ -97,6 +100,7 @@ const openDialog = (job?: any) => {
             expires_at: '',
         };
     }
+    router.reload({ only: ['errors'], preserveState: false });
     isDialogOpen.value = true;
 };
 
@@ -118,12 +122,18 @@ const submitForm = () => {
                 isDialogOpen.value = false;
                 editingJob.value = null;
             },
+            onError: () => {
+                // Keep dialog open to show errors
+            },
         });
     } else {
         router.post(postJobsRoutes.store().url, form.value, {
             onSuccess: () => {
                 isDialogOpen.value = false;
                 editingJob.value = null;
+            },
+            onError: () => {
+                // Keep dialog open to show errors
             },
         });
     }
@@ -173,7 +183,8 @@ const getStatusColor = (status: string) => {
                         <div class="space-y-6">
                             <div class="grid gap-2">
                                 <Label for="title">Job Title *</Label>
-                                <Input id="title" v-model="form.title" placeholder="e.g., Senior Developer" required />
+                                <Input id="title" v-model="form.title" placeholder="e.g., Senior Developer" required :class="errors.title ? 'border-destructive' : ''" />
+                                <InputError :message="errors.title" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="company_id">Company</Label>
@@ -181,12 +192,14 @@ const getStatusColor = (status: string) => {
                                     id="company_id"
                                     v-model="form.company_id"
                                     class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm h-9"
+                                    :class="errors.company_id ? 'border-destructive' : ''"
                                 >
                                     <option value="">Select Company</option>
                                     <option v-for="company in companies" :key="company.id" :value="company.id">
                                         {{ company.name }}
                                     </option>
                                 </select>
+                                <InputError :message="errors.company_id" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="description">Description *</Label>
@@ -194,9 +207,11 @@ const getStatusColor = (status: string) => {
                                     id="description"
                                     v-model="form.description"
                                     class="w-full min-h-[120px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                    :class="errors.description ? 'border-destructive' : ''"
                                     placeholder="Job description"
                                     required
                                 />
+                                <InputError :message="errors.description" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="requirements">Requirements</Label>
@@ -204,13 +219,16 @@ const getStatusColor = (status: string) => {
                                     id="requirements"
                                     v-model="form.requirements"
                                     class="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                    :class="errors.requirements ? 'border-destructive' : ''"
                                     placeholder="Job requirements"
                                 />
+                                <InputError :message="errors.requirements" />
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="grid gap-2">
                                     <Label for="location">Location</Label>
-                                    <Input id="location" v-model="form.location" placeholder="City, Country" />
+                                    <Input id="location" v-model="form.location" placeholder="City, Country" :class="errors.location ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.location" />
                                 </div>
                                 <div class="grid gap-2">
                                     <Label for="remote">Remote Type</Label>
@@ -218,11 +236,13 @@ const getStatusColor = (status: string) => {
                                         id="remote"
                                         v-model="form.remote"
                                         class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm h-9"
+                                        :class="errors.remote ? 'border-destructive' : ''"
                                     >
                                         <option value="on_site">On Site</option>
                                         <option value="remote">Remote</option>
                                         <option value="hybrid">Hybrid</option>
                                     </select>
+                                    <InputError :message="errors.remote" />
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-4">
@@ -232,6 +252,7 @@ const getStatusColor = (status: string) => {
                                         id="type"
                                         v-model="form.type"
                                         class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm h-9"
+                                        :class="errors.type ? 'border-destructive' : ''"
                                     >
                                         <option value="full_time">Full Time</option>
                                         <option value="part_time">Part Time</option>
@@ -239,6 +260,7 @@ const getStatusColor = (status: string) => {
                                         <option value="freelance">Freelance</option>
                                         <option value="internship">Internship</option>
                                     </select>
+                                    <InputError :message="errors.type" />
                                 </div>
                                 <div class="grid gap-2">
                                     <Label for="status">Status</Label>
@@ -246,34 +268,40 @@ const getStatusColor = (status: string) => {
                                         id="status"
                                         v-model="form.status"
                                         class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm h-9"
+                                        :class="errors.status ? 'border-destructive' : ''"
                                     >
                                         <option value="draft">Draft</option>
                                         <option value="active">Active</option>
                                         <option value="closed">Closed</option>
                                         <option value="expired">Expired</option>
                                     </select>
+                                    <InputError :message="errors.status" />
                                 </div>
                             </div>
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="grid gap-2">
                                     <Label for="salary_min">Min Salary</Label>
-                                    <Input id="salary_min" v-model.number="form.salary_min" type="number" min="0" />
+                                    <Input id="salary_min" v-model.number="form.salary_min" type="number" min="0" :class="errors.salary_min ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.salary_min" />
                                 </div>
                                 <div class="grid gap-2">
                                     <Label for="salary_max">Max Salary</Label>
-                                    <Input id="salary_max" v-model.number="form.salary_max" type="number" min="0" />
+                                    <Input id="salary_max" v-model.number="form.salary_max" type="number" min="0" :class="errors.salary_max ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.salary_max" />
                                 </div>
                                 <div class="grid gap-2">
                                     <Label for="salary_currency">Currency</Label>
-                                    <Input id="salary_currency" v-model="form.salary_currency" maxlength="3" />
+                                    <Input id="salary_currency" v-model="form.salary_currency" maxlength="3" :class="errors.salary_currency ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.salary_currency" />
                                 </div>
                             </div>
                             <div class="grid gap-2">
                                 <Label>Required Skills</Label>
                                 <div class="flex gap-2">
-                                    <Input v-model="skillInput" placeholder="Add skill" @keyup.enter="addSkill" />
+                                    <Input v-model="skillInput" placeholder="Add skill" @keyup.enter="addSkill" :class="errors.skills ? 'border-destructive' : ''" />
                                     <Button type="button" @click="addSkill">Add</Button>
                                 </div>
+                                <InputError :message="errors.skills" />
                                 <div v-if="form.skills.length > 0" class="flex flex-wrap gap-2 mt-2">
                                     <span
                                         v-for="skill in form.skills"
@@ -287,7 +315,8 @@ const getStatusColor = (status: string) => {
                             </div>
                             <div class="grid gap-2">
                                 <Label for="expires_at">Expiry Date</Label>
-                                <Input id="expires_at" v-model="form.expires_at" type="date" />
+                                <Input id="expires_at" v-model="form.expires_at" type="date" :class="errors.expires_at ? 'border-destructive' : ''" />
+                                <InputError :message="errors.expires_at" />
                             </div>
                         </div>
                         <DialogFooter>

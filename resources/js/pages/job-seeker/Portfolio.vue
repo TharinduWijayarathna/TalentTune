@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { portfolio } from '@/routes';
 import portfolioRoutes from '@/routes/portfolio';
+import InputError from '@/components/InputError.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Form, router } from '@inertiajs/vue3';
+import { Head, Form, router, usePage } from '@inertiajs/vue3';
 import { Plus, ExternalLink, Edit, Trash2, Github, Calendar } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps<{
     projects?: Array<{
@@ -36,6 +37,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const isDialogOpen = ref(false);
 const editingProject = ref<any>(null);
+const page = usePage();
+const errors = computed(() => page.props.errors || {});
 
 const form = ref({
     title: '',
@@ -78,6 +81,7 @@ const openDialog = (project?: any) => {
             is_featured: false,
         };
     }
+    router.reload({ only: ['errors'], preserveState: false });
     isDialogOpen.value = true;
 };
 
@@ -99,12 +103,18 @@ const submitForm = () => {
                 isDialogOpen.value = false;
                 editingProject.value = null;
             },
+            onError: () => {
+                // Keep dialog open to show errors
+            },
         });
     } else {
         router.post(portfolioRoutes.store().url, form.value, {
             onSuccess: () => {
                 isDialogOpen.value = false;
                 editingProject.value = null;
+            },
+            onError: () => {
+                // Keep dialog open to show errors
             },
         });
     }
@@ -148,7 +158,8 @@ const deleteProject = (id: number) => {
                         <div class="space-y-6">
                             <div class="grid gap-2">
                                 <Label for="title">Title</Label>
-                                <Input id="title" v-model="form.title" placeholder="Project title" required />
+                                <Input id="title" v-model="form.title" placeholder="Project title" required :class="errors.title ? 'border-destructive' : ''" />
+                                <InputError :message="errors.title" />
                             </div>
                             <div class="grid gap-2">
                                 <Label for="description">Description</Label>
@@ -156,35 +167,42 @@ const deleteProject = (id: number) => {
                                     id="description"
                                     v-model="form.description"
                                     class="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                    :class="errors.description ? 'border-destructive' : ''"
                                     placeholder="Project description"
                                 />
+                                <InputError :message="errors.description" />
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="grid gap-2">
                                     <Label for="url">Project URL</Label>
-                                    <Input id="url" v-model="form.url" type="url" placeholder="https://..." />
+                                    <Input id="url" v-model="form.url" type="url" placeholder="https://..." :class="errors.url ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.url" />
                                 </div>
                                 <div class="grid gap-2">
                                     <Label for="repository_url">Repository URL</Label>
-                                    <Input id="repository_url" v-model="form.repository_url" type="url" placeholder="https://github.com/..." />
+                                    <Input id="repository_url" v-model="form.repository_url" type="url" placeholder="https://github.com/..." :class="errors.repository_url ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.repository_url" />
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="grid gap-2">
                                     <Label for="start_date">Start Date</Label>
-                                    <Input id="start_date" v-model="form.start_date" type="date" />
+                                    <Input id="start_date" v-model="form.start_date" type="date" :class="errors.start_date ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.start_date" />
                                 </div>
                                 <div class="grid gap-2">
                                     <Label for="end_date">End Date</Label>
-                                    <Input id="end_date" v-model="form.end_date" type="date" />
+                                    <Input id="end_date" v-model="form.end_date" type="date" :class="errors.end_date ? 'border-destructive' : ''" />
+                                    <InputError :message="errors.end_date" />
                                 </div>
                             </div>
                             <div class="grid gap-2">
                                 <Label>Technologies</Label>
                                 <div class="flex gap-2">
-                                    <Input v-model="techInput" placeholder="Add technology" @keyup.enter="addTechnology" />
+                                    <Input v-model="techInput" placeholder="Add technology" @keyup.enter="addTechnology" :class="errors.technologies ? 'border-destructive' : ''" />
                                     <Button type="button" @click="addTechnology">Add</Button>
                                 </div>
+                                <InputError :message="errors.technologies" />
                                 <div v-if="form.technologies.length > 0" class="flex flex-wrap gap-2 mt-2">
                                     <span
                                         v-for="tech in form.technologies"
