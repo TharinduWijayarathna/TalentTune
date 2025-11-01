@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\HR\CandidateController;
+use App\Http\Controllers\HR\JobController;
+use App\Http\Controllers\JobSeeker\JobApplicationController;
+use App\Http\Controllers\JobSeeker\PortfolioController;
+use App\Http\Controllers\JobSeeker\SkillExpectationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -28,52 +35,46 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('job-seeker/MockInterview');
     })->name('mock-interview');
 
-    Route::get('portfolio', function () {
-        return Inertia::render('job-seeker/Portfolio');
-    })->name('portfolio');
-
     Route::get('profile-score', function () {
         return Inertia::render('job-seeker/ProfileScore');
     })->name('profile-score');
 
-    Route::get('skill-expectations', function () {
-        return Inertia::render('job-seeker/SkillExpectations');
-    })->name('skill-expectations');
+    // Portfolio CRUD
+    Route::get('portfolio', [PortfolioController::class, 'index'])->name('portfolio');
+    Route::post('portfolio', [PortfolioController::class, 'store'])->name('portfolio.store');
+    Route::put('portfolio/{portfolio}', [PortfolioController::class, 'update'])->name('portfolio.update');
+    Route::delete('portfolio/{portfolio}', [PortfolioController::class, 'destroy'])->name('portfolio.destroy');
 
-    Route::get('job-applications', function () {
-        return Inertia::render('job-seeker/JobApplications');
-    })->name('job-applications');
+    // Skill Expectations CRUD
+    Route::get('skill-expectations', [SkillExpectationController::class, 'index'])->name('skill-expectations');
+    Route::post('skill-expectations', [SkillExpectationController::class, 'store'])->name('skill-expectations.store');
+    Route::put('skill-expectations/{skillExpectation}', [SkillExpectationController::class, 'update'])->name('skill-expectations.update');
+    Route::delete('skill-expectations/{skillExpectation}', [SkillExpectationController::class, 'destroy'])->name('skill-expectations.destroy');
+
+    // Job Applications
+    Route::get('job-applications', [JobApplicationController::class, 'index'])->name('job-applications');
+    Route::post('job-applications', [JobApplicationController::class, 'store'])->name('job-applications.store');
+    Route::delete('job-applications/{jobApplication}', [JobApplicationController::class, 'destroy'])->name('job-applications.destroy');
 
     // HR Professional Routes
-    Route::get('post-jobs', function () {
-        return Inertia::render('hr/PostJobs');
-    })->name('post-jobs');
-
-    Route::get('review-candidates', function () {
-        return Inertia::render('hr/ReviewCandidates');
-    })->name('review-candidates');
-
-    Route::get('filter-candidates', function () {
-        return Inertia::render('hr/FilterCandidates');
-    })->name('filter-candidates');
-
     Route::get('subscriptions', function () {
         return Inertia::render('hr/Subscriptions');
     })->name('subscriptions');
 
+    // Jobs CRUD
+    Route::get('post-jobs', [JobController::class, 'index'])->name('post-jobs');
+    Route::post('post-jobs', [JobController::class, 'store'])->name('post-jobs.store');
+    Route::put('post-jobs/{job}', [JobController::class, 'update'])->name('post-jobs.update');
+    Route::delete('post-jobs/{job}', [JobController::class, 'destroy'])->name('post-jobs.destroy');
+
+    // Review Candidates
+    Route::get('review-candidates', [CandidateController::class, 'index'])->name('review-candidates');
+    Route::put('review-candidates/{application}', [CandidateController::class, 'updateApplication'])->name('review-candidates.update');
+
+    // Filter Candidates
+    Route::get('filter-candidates', [CandidateController::class, 'filter'])->name('filter-candidates');
+
     // Admin Routes
-    Route::get('user-management', function () {
-        return Inertia::render('admin/UserManagement');
-    })->name('user-management');
-
-    Route::get('company-management', function () {
-        return Inertia::render('admin/CompanyManagement');
-    })->name('company-management');
-
-    Route::get('hr-management', function () {
-        return Inertia::render('admin/HRManagement');
-    })->name('hr-management');
-
     Route::get('analytics', function () {
         return Inertia::render('admin/Analytics');
     })->name('analytics');
@@ -81,6 +82,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('payments', function () {
         return Inertia::render('admin/Payments');
     })->name('payments');
+
+    // Company Management CRUD
+    Route::get('company-management', [CompanyController::class, 'index'])->name('company-management');
+    Route::post('company-management', [CompanyController::class, 'store'])->name('company-management.store');
+    Route::put('company-management/{company}', [CompanyController::class, 'update'])->name('company-management.update');
+    Route::delete('company-management/{company}', [CompanyController::class, 'destroy'])->name('company-management.destroy');
+
+    // User Management
+    Route::get('user-management', [UserManagementController::class, 'index'])->name('user-management');
+    Route::put('user-management/{user}', [UserManagementController::class, 'update'])->name('user-management.update');
+    Route::delete('user-management/{user}', [UserManagementController::class, 'destroy'])->name('user-management.destroy');
+
+    // HR Management
+    Route::get('hr-management', [UserManagementController::class, 'hrIndex'])->name('hr-management');
 });
 
 require __DIR__.'/settings.php';

@@ -1,10 +1,28 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { filterCandidates } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
-import { Filter, Search, SlidersHorizontal } from 'lucide-vue-next';
+import { Head, router } from '@inertiajs/vue3';
+import { Filter, Search, SlidersHorizontal, User, Mail } from 'lucide-vue-next';
+import { ref } from 'vue';
+
+const props = defineProps<{
+    candidates?: {
+        data?: Array<{
+            id: number;
+            name: string;
+            email: string;
+        }>;
+    };
+    filters?: {
+        skills?: string;
+        experience?: string;
+    };
+}>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -12,6 +30,18 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: filterCandidates().url,
     },
 ];
+
+const filters = ref({
+    skills: props.filters?.skills || '',
+    experience: props.filters?.experience || 'any',
+});
+
+const applyFilters = () => {
+    router.get(filterCandidates().url, filters.value, {
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
 </script>
 
 <template>
@@ -37,22 +67,31 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <CardContent>
                     <div class="space-y-4">
                         <div>
-                            <label class="text-sm font-medium mb-2 block">Skills</label>
-                            <input
-                                type="text"
+                            <Label for="skills">Skills</Label>
+                            <Input
+                                id="skills"
+                                v-model="filters.skills"
                                 placeholder="Search by skills..."
-                                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                @keyup.enter="applyFilters"
                             />
                         </div>
                         <div>
-                            <label class="text-sm font-medium mb-2 block">Experience Level</label>
-                            <select class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                                <option>Any</option>
-                                <option>Entry Level</option>
-                                <option>Mid Level</option>
-                                <option>Senior Level</option>
+                            <Label for="experience">Experience Level</Label>
+                            <select
+                                id="experience"
+                                v-model="filters.experience"
+                                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            >
+                                <option value="any">Any</option>
+                                <option value="entry">Entry Level</option>
+                                <option value="mid">Mid Level</option>
+                                <option value="senior">Senior Level</option>
                             </select>
                         </div>
+                        <Button @click="applyFilters" class="w-full">
+                            <Search class="mr-2 h-4 w-4" />
+                            Search Candidates
+                        </Button>
                     </div>
                 </CardContent>
             </Card>
@@ -63,7 +102,28 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <CardDescription>Matching candidates will appear here</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div class="flex flex-col items-center justify-center py-8 text-center">
+                    <div v-if="candidates?.data && candidates.data.length > 0" class="space-y-4">
+                        <div
+                            v-for="candidate in candidates.data"
+                            :key="candidate.id"
+                            class="p-4 border rounded-lg hover:bg-accent transition-colors"
+                        >
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
+                                    <User class="h-6 w-6 text-primary" />
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-lg">{{ candidate.name }}</h3>
+                                    <p class="text-sm text-muted-foreground flex items-center gap-1">
+                                        <Mail class="h-4 w-4" />
+                                        {{ candidate.email }}
+                                    </p>
+                                </div>
+                                <Button variant="outline">View Profile</Button>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="flex flex-col items-center justify-center py-8 text-center">
                         <Search class="h-12 w-12 text-muted-foreground mb-4" />
                         <p class="text-sm text-muted-foreground">
                             Apply filters above to search for candidates
@@ -74,4 +134,3 @@ const breadcrumbs: BreadcrumbItem[] = [
         </div>
     </AppLayout>
 </template>
-
